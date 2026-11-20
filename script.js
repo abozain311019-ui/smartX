@@ -1,10 +1,10 @@
 /**
- * SMART X — Interactive Experience Engine (Jeddah Edition)
- * Zero-Bootstrap • Interactive Smartphone Feed • Architectural Blueprint • Scroll Stacking
+ * SMART X — Mobile Showroom & Storefront Engine (Jeddah)
+ * Zero-Bootstrap • Persistent Van Cart • Instant Checkout + PHP SQLite + WhatsApp
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Scroll Progress Rail
+  // 1. Scroll Progress Bar
   const scrollProgress = document.getElementById("scrollProgress");
   window.addEventListener("scroll", () => {
     if (!scrollProgress) return;
@@ -21,32 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
         revealObserver.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.1 });
   document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
-  // 3. Mouse-Reactive Glow Cards
-  document.querySelectorAll(".glow-card").forEach((card) => {
-    card.addEventListener("mousemove", (e) => {
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty("--mx", `${e.clientX - rect.left}px`);
-      card.style.setProperty("--my", `${e.clientY - rect.top}px`);
-    });
-  });
-
-  // 4. Magnetic Primary Buttons
-  document.querySelectorAll(".magnetic").forEach((btn) => {
-    btn.addEventListener("mousemove", (e) => {
-      const rect = btn.getBoundingClientRect();
-      const x = (e.clientX - rect.left - rect.width / 2) * 0.13;
-      const y = (e.clientY - rect.top - rect.height / 2) * 0.17;
-      btn.style.transform = `translate(${x}px, ${y}px)`;
-    });
-    btn.addEventListener("mouseleave", () => {
-      btn.style.transform = "";
-    });
-  });
-
-  // 5. Mobile Navigation
+  // 3. Mobile Navigation Menu
   const menuToggle = document.getElementById("menuToggle");
   const siteNav = document.getElementById("siteNav");
   function closeMenu() {
@@ -63,148 +41,160 @@ document.addEventListener("DOMContentLoaded", () => {
     siteNav.querySelectorAll("a").forEach((a) => a.addEventListener("click", closeMenu));
   }
 
-  // 6. Live Interactive Smartphone Surveillance Mockup
-  const phoneChannels = {
-    front: {
-      subtitle: "الواجهة والمدخل الرئيسي",
-      res: "4K • ملون ليلي",
-      toast: "الباب الرئيسي مؤمّن — رؤية صافية 100%",
-      img: "https://images.pexels.com/photos/37591155/pexels-photo-37591155.jpeg?auto=compress&cs=tinysrgb&w=1200"
-    },
-    villa: {
-      subtitle: "محيط الفيلا والأسوار",
-      res: "4K • بانوراما 180",
-      toast: "تغطية كاملة للأسوار والارتدادات بدون نقاط عمياء",
-      img: "https://images.pexels.com/photos/274895/pexels-photo-274895.jpeg?auto=compress&cs=tinysrgb&w=1200"
-    },
-    shop: {
-      subtitle: "المعرض والمكاتب الداخلية",
-      res: "4K • صوت وصورة",
-      toast: "صوت نقي وتسجيل مستمر لصالة العرض والمكاتب",
-      img: "https://images.pexels.com/photos/29866272/pexels-photo-29866272/free-photo-of-outdoor-security-camera-on-concrete-wall.jpeg?auto=compress&cs=tinysrgb&w=1200"
-    },
-    gate: {
-      subtitle: "البوابة وموقف السيارات",
-      res: "قراءة لوحات • ليلي",
-      toast: "توثيق فوري لدخول وخروج المركبات بدقة عالية",
-      img: "https://images.pexels.com/photos/12571569/pexels-photo-12571569.jpeg?auto=compress&cs=tinysrgb&w=1200"
-    }
-  };
+  // 4. Category Jump Cards & Store Product Filter
+  const filterPills = document.querySelectorAll(".filter-pill");
+  const productCards = document.querySelectorAll(".product-card");
+  const storeSection = document.getElementById("store");
 
-  const phoneClock = document.getElementById("phoneClock");
-  if (phoneClock) {
-    const tick = () => {
-      phoneClock.textContent = new Date().toTimeString().split(" ")[0];
-    };
-    tick();
-    setInterval(tick, 1000);
-  }
-
-  function switchPhoneChannel(key) {
-    const ch = phoneChannels[key];
-    if (!ch) return;
-
-    document.querySelectorAll("[data-channel]").forEach((el) => {
-      el.classList.toggle("active", el.getAttribute("data-channel") === key);
+  function applyFilter(category) {
+    filterPills.forEach((p) => {
+      p.classList.toggle("active", p.getAttribute("data-filter") === category);
     });
-
-    const img = document.getElementById("phoneFeedImg");
-    const sub = document.getElementById("phoneCamSubtitle");
-    const res = document.getElementById("phoneFeedRes");
-    const toast = document.getElementById("phoneToastText");
-
-    if (img) {
-      img.style.opacity = "0.4";
-      setTimeout(() => {
-        img.src = ch.img;
-        img.style.opacity = "1";
-      }, 150);
-    }
-    if (sub) sub.textContent = ch.subtitle;
-    if (res) res.textContent = ch.res;
-    if (toast) toast.textContent = ch.toast;
+    productCards.forEach((card) => {
+      const show = category === "all" || card.getAttribute("data-category") === category;
+      card.classList.toggle("is-hidden", !show);
+    });
   }
 
-  document.querySelectorAll("[data-channel]").forEach((btn) => {
-    btn.addEventListener("click", () => switchPhoneChannel(btn.getAttribute("data-channel")));
+  filterPills.forEach((pill) => {
+    pill.addEventListener("click", () => applyFilter(pill.getAttribute("data-filter") || "all"));
   });
 
-  // 7. Interactive Architectural Blueprint
-  const blueprintData = {
-    gate: {
-      step: "النقطة 01 من 05",
-      title: "البوابة والمدخل الرئيسي",
-      desc: "أهم نقطة في أي بيت أو منشأة. نركب هنا كاميرا بولت أو بانوراما عريضة برؤية ليلية ملونة، تكشف لك الباب والشارع بوضوح تام وتنبهك فوراً على جوالك.",
-      cam: "بانوراما 180 درجة / بولت 4K ملونة",
-      cov: "تغطية عريضة للواجهة والمدخل حتى 60 متر",
-      feat: "إشعار فوري على الجوال عند اقتراب أي شخص من الباب"
-    },
-    perimeter: {
-      step: "النقطة 02 من 05",
-      title: "زوايا السور والارتدادات الجانبية",
-      desc: "حماية متكاملة للأسوار الجانبية والخلفية بكاميرات خارجية قوية تتحمل حرارة ورطوبة جدة، مرتبة بزوايا متقاطعة تمنع وجود أي نقطة عمياء حول المبنى.",
-      cam: "كاميرا بولت خارجية مقاومة لحرارة جدة",
-      cov: "تغطية طولية دقيقة للأسوار والممرات الجانبية",
-      feat: "رصد دقيق للحركة على السور وتجاهل حركة الأشجار أو الظلال"
-    },
-    indoor: {
-      step: "النقطة 03 من 05",
-      title: "الصالات والممرات الداخلية",
-      desc: "كاميرات قبة مدمجة بتصميم هادئ تندمج مع الأسقف الجبسية والديكورات الحديثة في البيوت والمكاتب وصالات العرض مع تسجيل صوتي نقي.",
-      cam: "كاميرا قبة داخلية للأسقف (دوم 4K)",
-      cov: "زاوية رؤية واسعة 120 درجة للغرف والممرات",
-      feat: "مايكروفون مدمج عالي النقاء ورؤية ليلية صافية"
-    },
-    garage: {
-      step: "النقطة 04 من 05",
-      title: "موقف السيارات وبوابة الكراج",
-      desc: "رؤية دقيقة لحركة دخول وخروج المركبات وتأمين السيارات المتوقفة، مع معالجة ذكية تمنع انعكاس أنوار السيارات ليلاً لقراءة التفاصيل بوضوح.",
-      cam: "كاميرا قراءة لوحات / بولت عالية الوضوح",
-      cov: "تركيز مباشر على مسار المركبات ومواقف الكراج",
-      feat: "توثيق كامل لأوقات الدخول والخروج وحماية المركبات"
-    },
-    roof: {
-      step: "النقطة 05 من 05",
-      title: "التغطية الشاملة 360 درجة للساحات والسطح",
-      desc: "للأسطح والفلل الكبيرة والمستودعات المفتوحة، نركب كاميرا متحركة شاملة تعطيك حرية تدوير العدسة والتقريب البصري المباشر من تطبيق الجوال.",
-      cam: "كاميرا متحركة شاملة (PTZ 360)",
-      cov: "دوران كامل 360 درجة ومدى رؤية يصل إلى 150 متر",
-      feat: "تتبع تلقائي للأجسام المتحركة وتحكم فوري عن بُعد"
-    }
-  };
+  document.querySelectorAll("[data-jump-category]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cat = btn.getAttribute("data-jump-category") || "all";
+      applyFilter(cat);
+      if (storeSection) storeSection.scrollIntoView({ behavior: "smooth" });
+    });
+  });
 
-  function selectBlueprintNode(key) {
-    const data = blueprintData[key];
-    if (!data) return;
+  // 5. Persistent Mobile Van Shopping Cart
+  let cart = [];
+  try {
+    cart = JSON.parse(localStorage.getItem("smartx_van_cart") || "[]");
+    if (!Array.isArray(cart)) cart = [];
+  } catch {
+    cart = [];
+  }
 
-    document.querySelectorAll(".bp-node").forEach((n) => n.classList.toggle("active", n.getAttribute("data-bp") === key));
-    document.querySelectorAll(".bp-tab").forEach((t) => t.classList.toggle("active", t.getAttribute("data-bp") === key));
-    document.querySelectorAll(".bp-cone").forEach((c) => c.classList.toggle("active", c.id === `cone-${key}`));
+  const cartCountEl = document.getElementById("cartCount");
+  const drawerCartList = document.getElementById("drawerCartList");
+  const checkoutCartList = document.getElementById("checkoutCartList");
+  const cartDrawer = document.getElementById("cartDrawer");
+  const cartBackdrop = document.getElementById("cartBackdrop");
 
-    const setEl = (id, text) => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = text;
+  function openCart() {
+    if (cartDrawer) cartDrawer.classList.add("open");
+    if (cartBackdrop) cartBackdrop.classList.add("open");
+  }
+
+  function closeCart() {
+    if (cartDrawer) cartDrawer.classList.remove("open");
+    if (cartBackdrop) cartBackdrop.classList.remove("open");
+  }
+
+  function saveCart() {
+    localStorage.setItem("smartx_van_cart", JSON.stringify(cart));
+  }
+
+  function renderCart() {
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    if (cartCountEl) cartCountEl.textContent = String(totalQty);
+
+    const buildHTML = () => {
+      if (cart.length === 0) {
+        return `<div class="cart-empty-msg">سلة سيارة الخدمة فارغة حالياً.<br>يمكنك إضافة منتجات من المتجر أو طلب زيارة معاينة مجانية مباشرة.</div>`;
+      }
+      return cart.map((item) => `
+        <div class="cart-item-row">
+          <img src="${item.img}" alt="${item.name}">
+          <div class="cart-item-info">
+            <strong>${item.name}</strong>
+            <small>${item.spec}</small>
+          </div>
+          <div class="qty-controls">
+            <button type="button" class="qty-btn" data-qty-act="dec" data-id="${item.id}">-</button>
+            <span class="qty-val">${item.qty}</span>
+            <button type="button" class="qty-btn" data-qty-act="inc" data-id="${item.id}">+</button>
+          </div>
+        </div>
+      `).join("");
     };
 
-    setEl("bpActiveName", data.title);
-    setEl("bpStepNum", data.step);
-    setEl("bpTitle", data.title);
-    setEl("bpDesc", data.desc);
-    setEl("bpCamType", data.cam);
-    setEl("bpCoverage", data.cov);
-    setEl("bpFeature", data.feat);
+    const html = buildHTML();
+    if (drawerCartList) drawerCartList.innerHTML = html;
+    if (checkoutCartList) checkoutCartList.innerHTML = html;
+
+    document.querySelectorAll(".qty-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-id");
+        const act = btn.getAttribute("data-qty-act");
+        const target = cart.find((i) => i.id === id);
+        if (!target) return;
+        if (act === "inc") target.qty += 1;
+        if (act === "dec") target.qty -= 1;
+        cart = cart.filter((i) => i.qty > 0);
+        saveCart();
+        renderCart();
+      });
+    });
   }
 
-  document.querySelectorAll("[data-bp]").forEach((el) => {
-    el.addEventListener("click", () => selectBlueprintNode(el.getAttribute("data-bp")));
+  document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id") || "";
+      const name = btn.getAttribute("data-name") || "";
+      const img = btn.getAttribute("data-img") || "";
+      const spec = btn.getAttribute("data-spec") || "";
+
+      const existing = cart.find((i) => i.id === id);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ id, name, img, spec, qty: 1 });
+      }
+      saveCart();
+      renderCart();
+
+      const originalText = btn.innerHTML;
+      btn.innerHTML = "<span>تمت الإضافة لسلة السيارة ✓</span>";
+      setTimeout(() => { btn.innerHTML = originalText; }, 1100);
+      openCart();
+    });
   });
 
-  // 8. Interactive 4K Clarity Slider
+  const cartTrigger = document.getElementById("cartTrigger");
+  const closeCartBtn = document.getElementById("closeCartBtn");
+  const goToCheckoutBtn = document.getElementById("goToCheckoutBtn");
+  const clearCartBtn = document.getElementById("clearCartBtn");
+
+  if (cartTrigger) cartTrigger.addEventListener("click", openCart);
+  if (closeCartBtn) closeCartBtn.addEventListener("click", closeCart);
+  if (cartBackdrop) cartBackdrop.addEventListener("click", closeCart);
+  if (goToCheckoutBtn) goToCheckoutBtn.addEventListener("click", closeCart);
+  if (clearCartBtn) {
+    clearCartBtn.addEventListener("click", () => {
+      cart = [];
+      saveCart();
+      renderCart();
+    });
+  }
+
+  renderCart();
+
+  // 6. Delivery Mode Radio Highlighting
+  document.querySelectorAll(".delivery-option input").forEach((radio) => {
+    radio.addEventListener("change", () => {
+      document.querySelectorAll(".delivery-option").forEach((opt) => {
+        opt.classList.toggle("active", opt.contains(radio));
+      });
+    });
+  });
+
+  // 7. Interactive 4K Clarity Slider
   const compRange = document.getElementById("compRange");
   const compBeforeLayer = document.getElementById("compBeforeLayer");
   const compHandle = document.getElementById("compHandle");
-  const comparisonStage = document.getElementById("comparisonStage");
-
   if (compRange && compBeforeLayer && compHandle) {
     compRange.addEventListener("input", (e) => {
       const pct = `${e.target.value}%`;
@@ -213,68 +203,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  document.querySelectorAll(".v-mode").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".v-mode").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      if (!comparisonStage) return;
-
-      const preset = btn.getAttribute("data-vision-preset");
-      comparisonStage.classList.toggle("ai-active", preset === "ai");
-      comparisonStage.classList.toggle("zoom-active", preset === "zoom");
-
-      if (preset === "ai" && compRange) {
-        compRange.value = "22";
-        compRange.dispatchEvent(new Event("input"));
-      } else if (preset === "colorvu" && compRange) {
-        compRange.value = "48";
-        compRange.dispatchEvent(new Event("input"));
-      }
-    });
-  });
-
-  // 9. Camera Showcase Filter
-  const filterPills = document.querySelectorAll(".filter-pill");
-  const camCards = document.querySelectorAll(".cam-card");
-
-  filterPills.forEach((pill) => {
-    pill.addEventListener("click", () => {
-      filterPills.forEach((p) => p.classList.remove("active"));
-      pill.classList.add("active");
-      const filter = pill.getAttribute("data-filter");
-      camCards.forEach((card) => {
-        const show = filter === "all" || card.getAttribute("data-category") === filter;
-        card.classList.toggle("is-hidden", !show);
-      });
-    });
-  });
-
-  // Form Helpers
-  const quoteSection = document.getElementById("quote");
-  const detailsInput = document.getElementById("d");
-  const districtInput = document.getElementById("district");
-
-  function scrollToQuote() {
-    if (quoteSection) {
-      quoteSection.scrollIntoView({ behavior: "smooth" });
-      setTimeout(() => {
-        const nameEl = document.getElementById("n");
-        if (nameEl) nameEl.focus();
-      }, 550);
-    }
-  }
-
-  document.querySelectorAll(".select-camera-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const name = btn.getAttribute("data-cam-name") || "";
-      if (detailsInput) detailsInput.value = `أرغب في معاينة ميدانية لموديل: ${name}`;
-      scrollToQuote();
-    });
-  });
-
-  // 10. Jeddah Neighborhood Coverage Tabs
+  // 8. Jeddah Coverage Zones
   const zoneTabs = document.querySelectorAll(".zone-tab");
   const zonePanels = document.querySelectorAll(".zone-panel");
+  const districtInput = document.getElementById("district");
+  const checkoutSection = document.getElementById("checkout");
 
   zoneTabs.forEach((tab) => {
     tab.addEventListener("click", () => {
@@ -289,11 +222,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".district-chip").forEach((chip) => {
     chip.addEventListener("click", () => {
       if (districtInput) districtInput.value = chip.getAttribute("data-district") || "";
-      scrollToQuote();
+      if (checkoutSection) checkoutSection.scrollIntoView({ behavior: "smooth" });
     });
   });
 
-  // 11. Async PHP Lead Submission + Instant WhatsApp
+  // 9. Checkout Submission -> PHP SQLite + WhatsApp with Full Cart Details
   const quoteForm = document.getElementById("qf");
   const statusBox = document.getElementById("st");
   const submitBtn = document.getElementById("submitBtn");
@@ -306,19 +239,29 @@ document.addEventListener("DOMContentLoaded", () => {
       const phone = (document.getElementById("p")?.value || "").trim();
       const district = (districtInput?.value || "جدة").trim();
       const place = document.getElementById("t")?.value || "منزل أو فيلا";
-      const cameras = document.getElementById("c")?.value || "يحدد بعد المعاينة المجانية";
-      const preferredDate = document.getElementById("prefDate")?.value || "في أقرب وقت متاح";
-      const details = (detailsInput?.value || "").trim();
+      const preferredDate = document.getElementById("prefDate")?.value || "في أقرب وقت متاح اليوم";
+      const serviceMode = document.querySelector('input[name="service_mode"]:checked')?.value || "توصيل وتركيب عبر السيارة المتنقلة";
+      const userNotes = (document.getElementById("d")?.value || "").trim();
 
       if (name.length < 2 || phone.replace(/\D/g, "").length < 9) {
         statusBox.className = "form-status e";
-        statusBox.textContent = "فضلاً اكتب اسمك ورقم جوال صحيح عشان نقدر نتواصل معك.";
+        statusBox.textContent = "فضلاً اكتب اسمك الكريم ورقم جوال صحيح لنتمكن من تأكيد طلب السيارة.";
         return;
       }
 
+      const cartSummaryText = cart.length > 0
+        ? cart.map((i) => `${i.name} (العدد: ${i.qty})`).join(" + ")
+        : "طلب زيارة معاينة مجانية بدون منتجات محددة";
+
+      const fullDetails = [
+        `نوع الخدمة: ${serviceMode}`,
+        `محتويات سلة السيارة: ${cartSummaryText}`,
+        userNotes ? `ملاحظات العميل: ${userNotes}` : ""
+      ].filter(Boolean).join(" | ");
+
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerHTML = "<span>جاري تسجيل طلب الزيارة الميدانية...</span>";
+        submitBtn.innerHTML = "<span>جاري تسجيل الطلب وتوجيه سيارة الخدمة...</span>";
       }
 
       try {
@@ -330,11 +273,11 @@ document.addEventListener("DOMContentLoaded", () => {
             phone,
             district,
             place,
-            cameras,
-            resolution: "يحدد خلال المعاينة المجانية",
+            cameras: cart.length > 0 ? `${cart.reduce((s, i) => s + i.qty, 0)} منتج من المتجر` : "زيارة معاينة مجانية",
+            resolution: serviceMode,
             preferred_date: preferredDate,
-            estimated_price: "يحدد بعد المعاينة المجانية",
-            details
+            estimated_price: "يؤكد السعر النهائي مع المعاينة والتركيب",
+            details: fullDetails
           })
         });
 
@@ -347,7 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
         statusBox.innerHTML = `
           <strong>${result.message}</strong>
           <div style="margin-top:6px;font-size:13.5px;">
-            تم حفظ طلبك، وجاري فتح محادثة واتساب مباشرة مع فريق جدة...
+            تم حفظ تفاصيل السلة والطلب في النظام، وجاري فتح محادثة واتساب مباشرة مع فريق جدة...
           </div>
         `;
 
@@ -362,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.innerHTML = "<span>أرسل الطلب وتواصل معنا عبر واتساب</span>";
+          submitBtn.innerHTML = "<span>تأكيد الطلب وإرساله لسيارة الخدمة (حفظ + واتساب)</span>";
         }
       }
     });
